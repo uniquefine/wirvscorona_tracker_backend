@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>First Dashboard</title>
+</head>
+<body>
+{% if plot_list %}
+    {% for plot in plot_list %}
+
+    {{ plot | safe }}
+    {% endfor %}
+{% else %}
+    <p>No plots available.</p>
+{% endif %}
+</body>
+</html>
