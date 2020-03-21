@@ -3,12 +3,14 @@ import firebase_admin
 
 import os
 
-def get_data():
-    key = eval(os.getenv("FIREBASE_CREDENTIALS"))
-    cred = credentials.Certificate(key)
-    firebase_admin.initialize_app(cred)
+key = eval(os.getenv("FIREBASE_CREDENTIALS"))
+cred = credentials.Certificate(key)
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
-    db = firestore.client()
+
+def get_data():
+
     users_ref = db.collection(u'users')
     docs = users_ref.stream()
 

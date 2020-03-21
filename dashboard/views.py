@@ -13,12 +13,12 @@ def first_dashboard(request):
     data = get_data()
 
     # Plot functions that should be displayed in this dashboard
-    plot_functions = [dummy_function]
+    plot_functions = [("Dummy Plot", dummy_function)]
 
     plot_list = []
-    for function in plot_functions:
+    for name, function in plot_functions:
         try:
-            plot_list.append(function(data))
+            plot_list.append({"title": name, "html": function(data)})
         except Exception as e:
             plot_list.append(f"<p>error in plotting: {e}<\p>")
 
