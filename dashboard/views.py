@@ -13,7 +13,7 @@ def first_dashboard(request):
     data = get_data()
 
     # Plot functions that should be displayed in this dashboard
-    plot_functions = [("Häufigkeit der Symptome", symptom_dist),("Struktur der Profile", profile_dist), ("Sun Plot", sun_burst), ("Kumulative Anzahl Bestätigter Fälle", infected_cummulative)]
+    plot_functions = [("Häufigkeit der Symptome", symptom_dist),("Struktur der Profile", profile_dist), ("Symptomzusammenhang", sun_burst), ("Kumulative Anzahl Bestätigter Fälle", infected_cummulative)]
 
     plot_list = []
     for name, function in plot_functions:

@@ -165,13 +165,13 @@ def sun_burst(data):
                   'testedPositiveOn'] != False, 'testedPositiveOn'] = 'Positive Corona Test'
     frame.loc[frame[
                   'testedPositiveOn'] == False, 'testedPositiveOn'] = 'No Corona Confirmed'
-    frame['nr_symptoms'] = frame[colnames[1:]].sum(axis=1)
+    frame['Anzahl Symptome'] = frame[colnames[1:]].sum(axis=1)
     for col in colnames[1:]:
         frame[col] = frame[col].replace(True, names_symptoms[col])
         frame[col] = frame[col].replace(False, f'Kein {names_symptoms[col]}')
 
     fig = px.sunburst(frame,
-                      path=colnames, color='nr_symptoms',
+                      path=colnames, color='Anzahl Symptome',
                       maxdepth=6)
     fig.update_layout(
         margin=dict(
