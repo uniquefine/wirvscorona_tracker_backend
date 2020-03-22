@@ -1,6 +1,7 @@
 import plotly.express as px
 import pandas as pd
 import datetime
+from sklearn import tree
 
 col_profile = ['gender', 'isSmoker', 'testedPositiveOn', 'hasFlueVaccine',
                'hasLungDisease', 'hasDiabetes', 'isObese', 'takeSteroids']
@@ -8,11 +9,12 @@ col_symptoms = ['hasCough', 'hasFever', 'hasChills', 'feelsWeak',
                 'hasLimbPain', 'hasSniff', 'hasDiarrhea', 'hasSoreThroat',
                 'hasHeadache', 'hasBreathingProblem']
 names_symptoms = {'hasCough': 'Cough', 'hasFever': 'Fever',
-                      'hasChills': 'Chills', 'feelsWeak': 'Feels Weak',
-                      'hasLimbPain': 'Limb Pain', 'hasSniff': 'Sniffles',
-                      'hasDiarrhea': 'Diarrhea', 'hasSoreThroat': 'Sore Throat',
-                      'hasHeadache': 'Headache',
-                      'hasBreathingProblem': 'Breathing Problem'}
+                  'hasChills': 'Chills', 'feelsWeak': 'Feels Weak',
+                  'hasLimbPain': 'Limb Pain', 'hasSniff': 'Sniffles',
+                  'hasDiarrhea': 'Diarrhea', 'hasSoreThroat': 'Sore Throat',
+                  'hasHeadache': 'Headache',
+                  'hasBreathingProblem': 'Breathing Problem'}
+
 
 def to_df(d):
     """
@@ -28,7 +30,8 @@ def to_df(d):
             recs.append(
                 {"userid": user, "timestamp": timestamp, **profile, **entry})
 
-    df = pd.DataFrame.from_records(recs, columns=['userid', 'timestamp']+col_symptoms+col_profile)
+    df = pd.DataFrame.from_records(recs, columns=['userid',
+                                                  'timestamp'] + col_symptoms + col_profile)
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s')
     return df
 
@@ -38,16 +41,20 @@ def dummy_function(data):
     return fig.to_html(full_html=False,
                        include_plotlyjs=True)  # , include_mathjax=True)
 
+
 def infected_cummulative(data):
     df = to_df(data)
 
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s')
-    test_times = df[~df['testedPositiveOn'].isna()][['userid', 'testedPositiveOn']].drop_duplicates()
+    test_times = df[~df['testedPositiveOn'].isna()][
+        ['userid', 'testedPositiveOn']].drop_duplicates()
 
     test_times['nInfected'] = test_times['testedPositiveOn'].rank()
-    test_times['testedPositiveOn'] = pd.to_datetime(test_times.testedPositiveOn, unit='s')
+    test_times['testedPositiveOn'] = pd.to_datetime(test_times.testedPositiveOn,
+                                                    unit='s')
 
-    test_times['percentInfected'] = test_times.nInfected / df['userid'].nunique() * 100
+    test_times['percentInfected'] = test_times.nInfected / df[
+        'userid'].nunique() * 100
 
     test_times = test_times.sort_values("testedPositiveOn")
     fig = px.line(test_times, x='testedPositiveOn', y='percentInfected')
@@ -56,21 +63,24 @@ def infected_cummulative(data):
         xaxis_title="Time",
         yaxis_title="Tested positive [%]",
         margin=dict(
-                l=0,
-                r=0,
-                b=0,
-                t=0,
-                pad=1
-            ),
+            l=0,
+            r=0,
+            b=0,
+            t=0,
+            pad=1
+        ),
 
     )
     fig.update_yaxes(range=[0, 100])
-    return fig.to_html(full_html=False, include_plotlyjs=True)#, include_mathjax=True)
+    return fig.to_html(full_html=False,
+                       include_plotlyjs=True)  # , include_mathjax=True)
+
 
 def symptom_dist(data):
     df = to_df(data)
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s')
-    most_recent = df.loc[df.groupby('userid')['timestamp'].idxmax()].filter(col_symptoms)
+    most_recent = df.loc[df.groupby('userid')['timestamp'].idxmax()].filter(
+        col_symptoms)
     frequencies = most_recent.sum() / most_recent.count()
     fig = px.bar(x=frequencies.index, y=frequencies * 100, )
     fig.update_layout(
@@ -85,7 +95,9 @@ def symptom_dist(data):
         ),
     )
     fig.update_yaxes(range=[0, 100])
-    return fig.to_html(full_html=False, include_plotlyjs=True)#, include_mathjax=True)
+    return fig.to_html(full_html=False,
+                       include_plotlyjs=True)  # , include_mathjax=True)
+
 
 def sun_burst(data):
     today = datetime.datetime.now()
@@ -142,3 +154,17 @@ def sun_burst(data):
 
     return fig.to_html(full_html=False, include_plotlyjs=True)
 
+
+def plot_tree(data):
+    df = to_df(data)
+
+    df.testedPositiveOn.fillna(value=False, inplace=True)
+    df.loc[df['testedPositiveOn'] != False, 'testedPositiveOn'] = 1
+    df.loc[df['testedPositiveOn'] == False, 'testedPositiveOn'] = 0
+
+    y = df['testedPositiveOn'].astype('int')
+    X = df[col_symptoms].astype('bool')
+    clf = tree.DecisionTreeClassifier(max_depth=6)
+    fitted = clf.fit(X, y)
+    tree.plot_tree(fitted)
+    return tree.plot_tree(fitted)
