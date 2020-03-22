@@ -1,7 +1,7 @@
 
 import plotly.express as px
 import pandas as pd
-
+import datetime
 
 def dummy_function(data):
     fig = px.scatter(x=range(10), y=range(10))
@@ -10,9 +10,11 @@ def dummy_function(data):
 
 def sun_burst(data):
 
-    colnames = ['corona','cough', 'fever','pain']
-
+    col_profile = ['gender', 'isSmoker', 'testedPositiveOn', 'hasFlueVaccine', 'hasLungDisease', 'hasDiabetes', 'isObese', 'takeSteroids']
+    col_symptoms = ['hasCough', 'hasFever', 'hasChills', 'feelsWeak',
+                    'hasLimbPain', 'hasSniff', 'hasDiarrhea','hasSoreThroat', 'hasHeadache', 'hasBreathingProblem']
     empty_line = {}
+    colnames = col_profile + col_symptoms
     for key in colnames:
         empty_line[key] = False
 
@@ -20,15 +22,20 @@ def sun_burst(data):
 
     for key, components in data.items():
         line = empty_line.copy()
-        line['corona'] = components['profile']['corona']
+
         for symptom, present in components['journal']['today'].items():
             if symptom in colnames:
                 line[symptom] = present
-            frame = frame.append(line, ignore_index=True)
+        for condition, present in components['profile']
+            if condition in colnames:
+                line[condition] = present
+        frame = frame.append(line, ignore_index=True)
 
-    for col in colnames:
+    frame['hasCorona'] = bool(frame['testedPositiveOn'])
+    for col in colnames[0:1,3:]:
         frame[col] = frame[col].replace(True, f'has{col}')
         frame[col] = frame[col].replace(False, f'no {col}')
 
     fig = px.sunburst(frame, path = colnames)
     return fig.to_html(full_html=False, include_plotlyjs=True)
+
