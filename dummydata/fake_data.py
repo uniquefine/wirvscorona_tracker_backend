@@ -3,6 +3,7 @@ import time
 import json
 import pdb
 
+
 def rand_date():
     random_date = time.time() - 86400 * random.choice([0, 1, 2, 3, 4, 5, 6])
     return random_date
@@ -10,7 +11,8 @@ def rand_date():
 
 def generate_data(nr_users, outpath):
     col_profile = ['gender', 'testedPositiveOn', 'isSmoker', 'hasFlueVaccine',
-                   'hasLungDisease', 'hasDiabetes', 'isObese', 'takeSteroids']
+                   'hasLungDisease', 'hasDiabetes', 'isObese', 'takeSteroids',
+                   'livesAlone']
     col_journal = ['hasCough', 'hasFever', 'hasChills', 'feelsWeak',
                    'hasLimbPain', 'hasSniff', 'hasDiarrhea', 'hasSoreThroat',
                    'hasHeadache', 'hasBreathingProblem']
@@ -42,8 +44,8 @@ def generate_data(nr_users, outpath):
         data[user] = {'profile': {}, 'journal': {}}
         data[user]['profile']['gender'] = random.choice(['male', 'female'])
         status = random.choices(['corona', 'flue', 'sniff', 'healthy'],
-                               weights=[0.1, 0.2, 0.3, 0.4])[0]
-        #pdb.set_trace()
+                                weights=[0.1, 0.2, 0.3, 0.4])[0]
+        # pdb.set_trace()
         if status == 'corona':
             data[user]['profile']['testedPositiveOn'] = random.choice(
                 [rand_date(), None])
@@ -64,7 +66,7 @@ def generate_data(nr_users, outpath):
             data[user]['journal'][date] = {}
             for entry in col_journal:
                 p_t = probs[status][entry]
-                value = random.choices([True, False], weights=[p_t, 1-p_t])[0]
+                value = random.choices([True, False], weights=[p_t, 1 - p_t])[0]
                 data[user]['journal'][date][entry] = value
 
     with open(outpath, 'w') as outfile:

@@ -99,18 +99,7 @@ def sun_burst(data):
                       'hasHeadache': 'Headache',
                       'hasBreathingProblem': 'Breathing Problem'}
 
-    color_map = {' ':'white', 'no Cough': 'white', 'no Fever': 'white',
-                 'no Chills': 'white', 'no Feels Weak': 'white',
-                 'no Limb Pain': 'white', 'no Sniffles': 'white',
-                 'no Diarrhea': 'white', 'no Sore Throat': 'white',
-                 'no Headache': 'white',
-                 'no Breathing Problem': 'white',
-                 'Cough': 'red', 'Fever': 'red',
-                 'Chills': 'red', 'Feels Weak': 'red',
-                 'Limb Pain': 'red', 'Sniffles': 'red',
-                 'Diarrhea': 'red', 'Sore Throat': 'red',
-                 'Headache': 'red',
-                 'Breathing Problem': 'red','Positive Corona Test':'red','No Corona Confirmed':'white' }
+
 
     empty_line = {}
     colnames = col_profile + col_symptoms
