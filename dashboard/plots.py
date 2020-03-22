@@ -142,7 +142,7 @@ def sun_burst(data):
     frame['nr_symptoms'] = frame[colnames[1:]].sum(axis=1)
     for col in colnames[1:]:
         frame[col] = frame[col].replace(True, names_symptoms[col])
-        frame[col] = frame[col].replace(False, ' ')
+        frame[col] = frame[col].replace(False, f'no names_symptoms[col]')
 
     fig = px.sunburst(frame,
                       path=colnames, color='nr_symptoms',
