@@ -83,7 +83,7 @@ def symptom_dist(data):
     return fig.to_html(full_html=False, include_plotlyjs=True)#, include_mathjax=True)
 
 def sun_burst(data):
-today = datetime.datetime.now()
+    today = datetime.datetime.now()
     mid = today.replace(hour=0, minute=0, second=0, microsecond=0)
     time_0 = datetime.datetime.timestamp(mid)
 
