@@ -53,7 +53,7 @@ def generate_data(nr_users, outpath):
             data[user]['profile']['testedPositiveOn'] = None
 
         for entry, value in zip(col_profile[2:],
-                                random.choices([True, False], k=6)):
+                                random.choices([True, False], k=7)):
             data[user]['profile'][entry] = value
             if data[user]['profile']['gender'] == 'male':
                 data[user]['profile']['pregnant'] = False

@@ -2,8 +2,9 @@ import plotly.express as px
 import pandas as pd
 import datetime
 
-col_profile = ['gender', 'isSmoker', 'testedPositiveOn', 'hasFlueVaccine',
-               'hasLungDisease', 'hasDiabetes', 'isObese', 'takeSteroids']
+col_profile = ['gender', 'testedPositiveOn', 'isSmoker', 'hasFlueVaccine',
+               'hasLungDisease', 'hasDiabetes', 'isObese', 'takeSteroids',
+               'livesAlone']
 col_symptoms = ['hasCough', 'hasFever', 'hasChills', 'feelsWeak',
                 'hasLimbPain', 'hasSniff', 'hasDiarrhea', 'hasSoreThroat',
                 'hasHeadache', 'hasBreathingProblem']
@@ -13,6 +14,13 @@ names_symptoms = {'hasCough': 'Husten', 'hasFever': 'Fiber',
                   'hasDiarrhea': 'Durchfall', 'hasSoreThroat': 'Halsschmerzen',
                   'hasHeadache': 'Kopfschmerzen',
                   'hasBreathingProblem': 'Erschwertes Atmen'}
+
+names_profile = {'gender': 'Geschlecht', 'isSmoker': 'Raucher',
+                 'testedPositiveOn': 'Positiver Corona Test am',
+                 'hasFlueVaccine': 'Grippe Impfung',
+                 'hasLungDisease': 'Kronische Lungenkrankheit',
+                 'hasDiabetes': 'Diabetes', 'isObese': 'Übergewicht',
+                 'takeSteroids': 'Steroide', 'lives alone': 'Einzelhaushalt'}
 
 
 def to_df(d):
@@ -96,6 +104,29 @@ def symptom_dist(data):
     )
     fig.update_yaxes(range=[0, 100])
     return fig.to_html(full_html=False,
+
+                       include_plotlyjs=True)  # , include_mathjax=True)
+
+
+def profile_dist(data):
+    df = to_df(data)
+    df = df.filter(col_profile[2:])
+    df.rename(columns=names_profile, inplace=True)
+    frequencies = df.sum() / df.count()
+    fig = px.bar(x=frequencies.index, y=frequencies * 100, )
+    fig.update_layout(
+        xaxis_title="Symptom",
+        yaxis_title="Gemeldet [%]",
+        margin=dict(
+            l=0,
+            r=0,
+            b=0,
+            t=0,
+            pad=1
+        ),
+    )
+    fig.update_yaxes(range=[0, 100])
+    return fig.to_html(full_html=False,
                        include_plotlyjs=True)  # , include_mathjax=True)
 
 
@@ -153,4 +184,3 @@ def sun_burst(data):
     )
 
     return fig.to_html(full_html=False, include_plotlyjs=True)
-
