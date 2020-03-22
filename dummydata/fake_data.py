@@ -1,7 +1,7 @@
 import random
 import time
 import json
-
+import pdb
 
 def rand_date():
     random_date = time.time() - 86400 * random.choice([0, 1, 2, 3, 4, 5, 6])
@@ -43,9 +43,8 @@ def generate_data(nr_users, outpath):
         data[user]['profile']['gender'] = random.choice(['Male', 'Female'])
         status = random.choices(['corona', 'flue', 'sniff', 'healthy'],
                                weights=[0.1, 0.2, 0.3, 0.4])[0]
-
-        if status == 'corona' and random.choices([True, False],
-                                                weights=[0.8, 0.2])[0]:
+        #pdb.set_trace()
+        if status == 'corona':
             data[user]['profile']['testedPositiveOn'] = random.choice(
                 [rand_date(), None])
         else:
