@@ -115,7 +115,7 @@ def profile_dist(data):
     frequencies = df.sum() / df.count()
     fig = px.bar(x=frequencies.index, y=frequencies * 100, )
     fig.update_layout(
-        xaxis_title="Symptom",
+        xaxis_title="Eigenschaft",
         yaxis_title="Gemeldet [%]",
         margin=dict(
             l=0,

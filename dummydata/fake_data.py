@@ -10,7 +10,8 @@ def rand_date():
 
 
 def generate_data(nr_users, outpath):
-    col_profile = ['gender', 'testedPositiveOn', 'isSmoker', 'hasFlueVaccine',
+    col_profile = ['gender', 'testedPositiveOn', 'pregnant', 'isSmoker',
+                   'hasFlueVaccine',
                    'hasLungDisease', 'hasDiabetes', 'isObese', 'takeSteroids',
                    'livesAlone']
     col_journal = ['hasCough', 'hasFever', 'hasChills', 'feelsWeak',
@@ -38,7 +39,12 @@ def generate_data(nr_users, outpath):
                     'feelsWeak': 0,
                     'hasLimbPain': 0, 'hasSniff': 0, 'hasDiarrhea': 0,
                     'hasSoreThroat': 0,
-                    'hasHeadache': 0.05, 'hasBreathingProblem': 0}}
+                    'hasHeadache': 0.05, 'hasBreathingProblem': 0},
+        'profile': {'isSmoker': 0.4, 'hasFlueVaccine': 0.2,
+                    'hasLungDisease': 0.1, 'hasDiabetes': 0.15, 'isObese': 0.3,
+                    'takeSteroids': 0.1,
+                    'livesAlone': 0.3, 'pregnant': 0.08}
+    }
 
     for user in range(nr_users):
         data[user] = {'profile': {}, 'journal': {}}
@@ -52,8 +58,9 @@ def generate_data(nr_users, outpath):
         else:
             data[user]['profile']['testedPositiveOn'] = None
 
-        for entry, value in zip(col_profile[2:],
-                                random.choices([True, False], k=7)):
+        for entry in col_profile[2:]:
+            p_t = probs['profile'][entry]
+            value = random.choices([True, False], weights=[p_t, 1 - p_t])[0]
             data[user]['profile'][entry] = value
             if data[user]['profile']['gender'] == 'male':
                 data[user]['profile']['pregnant'] = False
