@@ -1,7 +1,7 @@
 import plotly.express as px
 import pandas as pd
 import datetime
-from sklearn import tree
+#from sklearn import tree
 
 col_profile = ['gender', 'isSmoker', 'testedPositiveOn', 'hasFlueVaccine',
                'hasLungDisease', 'hasDiabetes', 'isObese', 'takeSteroids']
@@ -155,16 +155,16 @@ def sun_burst(data):
     return fig.to_html(full_html=False, include_plotlyjs=True)
 
 
-def plot_tree(data):
-    df = to_df(data)
-
-    df.testedPositiveOn.fillna(value=False, inplace=True)
-    df.loc[df['testedPositiveOn'] != False, 'testedPositiveOn'] = 1
-    df.loc[df['testedPositiveOn'] == False, 'testedPositiveOn'] = 0
-
-    y = df['testedPositiveOn'].astype('int')
-    X = df[col_symptoms].astype('bool')
-    clf = tree.DecisionTreeClassifier(max_depth=6)
-    fitted = clf.fit(X, y)
-    tree.plot_tree(fitted)
-    return tree.plot_tree(fitted)
+# def plot_tree(data):
+#     df = to_df(data)
+#
+#     df.testedPositiveOn.fillna(value=False, inplace=True)
+#     df.loc[df['testedPositiveOn'] != False, 'testedPositiveOn'] = 1
+#     df.loc[df['testedPositiveOn'] == False, 'testedPositiveOn'] = 0
+#
+#     y = df['testedPositiveOn'].astype('int')
+#     X = df[col_symptoms].astype('bool')
+#     clf = tree.DecisionTreeClassifier(max_depth=6)
+#     fitted = clf.fit(X, y)
+#     tree.plot_tree(fitted)
+#     return tree.plot_tree(fitted)
