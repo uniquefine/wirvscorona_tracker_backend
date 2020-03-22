@@ -7,7 +7,12 @@ col_profile = ['gender', 'isSmoker', 'testedPositiveOn', 'hasFlueVaccine',
 col_symptoms = ['hasCough', 'hasFever', 'hasChills', 'feelsWeak',
                 'hasLimbPain', 'hasSniff', 'hasDiarrhea', 'hasSoreThroat',
                 'hasHeadache', 'hasBreathingProblem']
-
+names_symptoms = {'hasCough': 'Cough', 'hasFever': 'Fever',
+                      'hasChills': 'Chills', 'feelsWeak': 'Feels Weak',
+                      'hasLimbPain': 'Limb Pain', 'hasSniff': 'Sniffles',
+                      'hasDiarrhea': 'Diarrhea', 'hasSoreThroat': 'Sore Throat',
+                      'hasHeadache': 'Headache',
+                      'hasBreathingProblem': 'Breathing Problem'}
 
 def to_df(d):
     """
@@ -89,17 +94,6 @@ def sun_burst(data):
 
     col_profile = ['testedPositiveOn'
                    ]
-    col_symptoms = ['hasCough', 'hasFever', 'hasChills', 'feelsWeak',
-                    'hasLimbPain', 'hasSniff', 'hasDiarrhea', 'hasSoreThroat',
-                    'hasHeadache', 'hasBreathingProblem']
-    names_symptoms = {'hasCough': 'Cough', 'hasFever': 'Fever',
-                      'hasChills': 'Chills', 'feelsWeak': 'Feels Weak',
-                      'hasLimbPain': 'Limb Pain', 'hasSniff': 'Sniffles',
-                      'hasDiarrhea': 'Diarrhea', 'hasSoreThroat': 'Sore Throat',
-                      'hasHeadache': 'Headache',
-                      'hasBreathingProblem': 'Breathing Problem'}
-
-
 
     empty_line = {}
     colnames = col_profile + col_symptoms
