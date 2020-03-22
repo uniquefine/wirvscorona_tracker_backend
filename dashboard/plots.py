@@ -23,18 +23,64 @@ def to_df(d):
             recs.append(
                 {"userid": user, "timestamp": timestamp, **profile, **entry})
 
-    df = pd.DataFrame.from_records(recs)
+    df = pd.DataFrame.from_records(recs, columns=['userid', 'timestamp']+col_symptoms+col_profile)
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s')
     return df
 
 
 def dummy_function(data):
-    import pdb
-    pdb.set_trace()
     fig = px.scatter(x=range(10), y=range(10))
     return fig.to_html(full_html=False,
                        include_plotlyjs=True)  # , include_mathjax=True)
 
+def infected_cummulative(data):
+    df = to_df(data)
+
+    df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s')
+    test_times = df[~df['testedPositiveOn'].isna()][['userid', 'testedPositiveOn']].drop_duplicates()
+
+    test_times['nInfected'] = test_times['testedPositiveOn'].rank()
+    test_times['testedPositiveOn'] = pd.to_datetime(test_times.testedPositiveOn, unit='s')
+
+    test_times['percentInfected'] = test_times.nInfected / df['userid'].nunique() * 100
+
+    test_times = test_times.sort_values("testedPositiveOn")
+    fig = px.line(test_times, x='testedPositiveOn', y='percentInfected')
+
+    fig.update_layout(
+        xaxis_title="Time",
+        yaxis_title="Tested positive [%]",
+        margin=dict(
+                l=0,
+                r=0,
+                b=0,
+                t=0,
+                pad=1
+            ),
+
+    )
+    fig.update_yaxes(range=[0, 100])
+    return fig.to_html(full_html=False, include_plotlyjs=True)#, include_mathjax=True)
+
+def symptom_dist(data):
+    df = to_df(data)
+    df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s')
+    most_recent = df.loc[df.groupby('userid')['timestamp'].idxmax()].filter(col_symptoms)
+    frequencies = most_recent.sum() / most_recent.count()
+    fig = px.bar(x=frequencies.index, y=frequencies * 100, )
+    fig.update_layout(
+        xaxis_title="Symptom",
+        yaxis_title="Reported [%]",
+        margin=dict(
+            l=0,
+            r=0,
+            b=0,
+            t=0,
+            pad=1
+        ),
+    )
+    fig.update_yaxes(range=[0, 100])
+    return fig.to_html(full_html=False, include_plotlyjs=True)#, include_mathjax=True)
 
 def sun_burst(data):
     today = datetime.datetime.now()
@@ -49,23 +95,9 @@ def sun_burst(data):
     names_symptoms = {'hasCough': 'Cough', 'hasFever': 'Fever',
                       'hasChills': 'Chills', 'feelsWeak': 'Feels Weak',
                       'hasLimbPain': 'Limb Pain', 'hasSniff': 'Sniffles',
-                      'hasDiarrhea': 'Diarrhea', 'hasSoreThroat': 'Sore Throat',
+                      'hasDiarrhea': 'Diarrhea', 'hasSoreThroat': 'SoreThroat',
                       'hasHeadache': 'Headache',
                       'hasBreathingProblem': 'Breathing Problem'}
-
-    color_map = {' ':'white', 'no Cough': 'white', 'no Fever': 'white',
-                 'no Chills': 'white', 'no Feels Weak': 'white',
-                 'no Limb Pain': 'white', 'no Sniffles': 'white',
-                 'no Diarrhea': 'white', 'no Sore Throat': 'white',
-                 'no Headache': 'white',
-                 'no Breathing Problem': 'white',
-                 'Cough': 'red', 'Fever': 'red',
-                 'Chills': 'red', 'Feels Weak': 'red',
-                 'Limb Pain': 'red', 'Sniffles': 'red',
-                 'Diarrhea': 'red', 'Sore Throat': 'red',
-                 'Headache': 'red',
-                 'Breathing Problem': 'red','Positive Corona Test':'red','No Corona Confirmed':'white' }
-
     empty_line = {}
     colnames = col_profile + col_symptoms
     for key in colnames:
@@ -91,15 +123,20 @@ def sun_burst(data):
     frame.testedPositiveOn.fillna(value=False, inplace=True)
     frame.loc[frame[
                   'testedPositiveOn'] != False, 'testedPositiveOn'] = 'Positive Corona Test'
-    frame.loc[frame[
-                  'testedPositiveOn'] == False, 'testedPositiveOn'] = 'No Corona Confirmed'
-    frame['nr_symptoms'] = frame[colnames[1:]].sum(axis=1)
     for col in colnames[1:]:
         frame[col] = frame[col].replace(True, names_symptoms[col])
-        frame[col] = frame[col].replace(False, ' ')
+        frame[col] = frame[col].replace(False, f'not {col}')
 
-    fig = px.sunburst(frame,
-                      path=colnames, color='nr_symptoms',
-                      maxdepth=6)
+    fig = px.sunburst(frame, path=colnames)
+    fig.update_layout(
+        margin=dict(
+            l=0,
+            r=0,
+            b=0,
+            t=0,
+            pad=1
+        ),
+    )
 
     return fig.to_html(full_html=False, include_plotlyjs=True)
+
