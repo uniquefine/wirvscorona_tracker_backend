@@ -1,6 +1,6 @@
 # wirvscorona Covid-19 journal backend
 
-Build with django as backend and plotly for interactive plots. Data from Journal app is saved in Firestore database.
+Built with django as backend and plotly for interactive plots. Data from Journal app is saved in Firestore database.
 
 The Frontend of the Journal app is [here](https://github.com/SimoneStefani/covid19-journal-app).
 
