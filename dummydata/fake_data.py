@@ -40,7 +40,7 @@ def generate_data(nr_users, outpath):
 
     for user in range(nr_users):
         data[user] = {'profile': {}, 'journal': {}}
-        data[user]['profile']['gender'] = random.choice(['Male', 'Female'])
+        data[user]['profile']['gender'] = random.choice(['male', 'female'])
         status = random.choices(['corona', 'flue', 'sniff', 'healthy'],
                                weights=[0.1, 0.2, 0.3, 0.4])[0]
         #pdb.set_trace()
@@ -53,7 +53,7 @@ def generate_data(nr_users, outpath):
         for entry, value in zip(col_profile[2:],
                                 random.choices([True, False], k=6)):
             data[user]['profile'][entry] = value
-            if data[user]['profile']['gender'] == 'Male':
+            if data[user]['profile']['gender'] == 'male':
                 data[user]['profile']['pregnant'] = False
 
         dates = []
