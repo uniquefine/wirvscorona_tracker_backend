@@ -2,9 +2,12 @@ import plotly.express as px
 import pandas as pd
 import datetime
 
-col_profile = ['gender', 'isSmoker', 'testedPositiveOn', 'hasFlueVaccine', 'hasLungDisease', 'hasDiabetes', 'isObese', 'takeSteroids']
+col_profile = ['gender', 'isSmoker', 'testedPositiveOn', 'hasFlueVaccine',
+               'hasLungDisease', 'hasDiabetes', 'isObese', 'takeSteroids']
 col_symptoms = ['hasCough', 'hasFever', 'hasChills', 'feelsWeak',
-                'hasLimbPain', 'hasSniff', 'hasDiarrhea','hasSoreThroat', 'hasHeadache', 'hasBreathingProblem']
+                'hasLimbPain', 'hasSniff', 'hasDiarrhea', 'hasSoreThroat',
+                'hasHeadache', 'hasBreathingProblem']
+
 
 def to_df(d):
     """
@@ -17,7 +20,8 @@ def to_df(d):
         journal = item['journal']
         profile = item['profile']
         for timestamp, entry in journal.items():
-            recs.append({"userid":user, "timestamp":timestamp, **profile, **entry})
+            recs.append(
+                {"userid": user, "timestamp": timestamp, **profile, **entry})
 
     df = pd.DataFrame.from_records(recs)
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s')
@@ -28,7 +32,8 @@ def dummy_function(data):
     import pdb
     pdb.set_trace()
     fig = px.scatter(x=range(10), y=range(10))
-    return fig.to_html(full_html=False, include_plotlyjs=True)#, include_mathjax=True)
+    return fig.to_html(full_html=False,
+                       include_plotlyjs=True)  # , include_mathjax=True)
 
 
 def sun_burst(data):
@@ -41,6 +46,12 @@ def sun_burst(data):
     col_symptoms = ['hasCough', 'hasFever', 'hasChills', 'feelsWeak',
                     'hasLimbPain', 'hasSniff', 'hasDiarrhea', 'hasSoreThroat',
                     'hasHeadache', 'hasBreathingProblem']
+    names_symptoms = {'hasCough': 'Cough', 'hasFever': 'Fever',
+                      'hasChills': 'Chills', 'feelsWeak': 'Feels Weak',
+                      'hasLimbPain': 'Limb Pain', 'hasSniff': 'Sniffles',
+                      'hasDiarrhea': 'Diarrhea', 'hasSoreThroat': 'SoreThroat',
+                      'hasHeadache': 'Headache',
+                      'hasBreathingProblem': 'Breathing Problem'}
     empty_line = {}
     colnames = col_profile + col_symptoms
     for key in colnames:
@@ -53,7 +64,8 @@ def sun_burst(data):
         components_copy = {'journal': {}, 'profile': {}}
         for timest in components['journal'].keys():
             if float(timest) > time_0:
-                components_copy['journal']['today'] = components['journal'][timest]
+                components_copy['journal']['today'] = components['journal'][
+                    timest]
 
         for symptom, present in components_copy['journal']['today'].items():
             if symptom in colnames:
@@ -63,11 +75,13 @@ def sun_burst(data):
                 line[condition] = present
         frame = frame.append(line, ignore_index=True)
     frame.testedPositiveOn.fillna(value=False, inplace=True)
-    frame.loc[frame['testedPositiveOn'] != False, 'testedPositiveOn' ] = 'Positive Corona Test'
+    frame.loc[frame[
+                  'testedPositiveOn'] != False, 'testedPositiveOn'] = 'Positive Corona Test'
     for col in colnames[1:]:
-        frame[col] = frame[col].replace(True, col)
+        frame[col] = frame[col].replace(True, names_symptoms[col])
         frame[col] = frame[col].replace(False, f'not {col}')
 
-    fig = px.sunburst(frame, path=colnames)
+    fig = px.sunburst(frame,
+                      path=colnames
+                      )
     return fig.to_html(full_html=False, include_plotlyjs=True)
-
