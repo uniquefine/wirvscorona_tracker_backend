@@ -83,7 +83,7 @@ def symptom_dist(data):
     return fig.to_html(full_html=False, include_plotlyjs=True)#, include_mathjax=True)
 
 def sun_burst(data):
-    today = datetime.datetime.now()
+today = datetime.datetime.now()
     mid = today.replace(hour=0, minute=0, second=0, microsecond=0)
     time_0 = datetime.datetime.timestamp(mid)
 
@@ -95,9 +95,23 @@ def sun_burst(data):
     names_symptoms = {'hasCough': 'Cough', 'hasFever': 'Fever',
                       'hasChills': 'Chills', 'feelsWeak': 'Feels Weak',
                       'hasLimbPain': 'Limb Pain', 'hasSniff': 'Sniffles',
-                      'hasDiarrhea': 'Diarrhea', 'hasSoreThroat': 'SoreThroat',
+                      'hasDiarrhea': 'Diarrhea', 'hasSoreThroat': 'Sore Throat',
                       'hasHeadache': 'Headache',
                       'hasBreathingProblem': 'Breathing Problem'}
+
+    color_map = {' ':'white', 'no Cough': 'white', 'no Fever': 'white',
+                 'no Chills': 'white', 'no Feels Weak': 'white',
+                 'no Limb Pain': 'white', 'no Sniffles': 'white',
+                 'no Diarrhea': 'white', 'no Sore Throat': 'white',
+                 'no Headache': 'white',
+                 'no Breathing Problem': 'white',
+                 'Cough': 'red', 'Fever': 'red',
+                 'Chills': 'red', 'Feels Weak': 'red',
+                 'Limb Pain': 'red', 'Sniffles': 'red',
+                 'Diarrhea': 'red', 'Sore Throat': 'red',
+                 'Headache': 'red',
+                 'Breathing Problem': 'red','Positive Corona Test':'red','No Corona Confirmed':'white' }
+
     empty_line = {}
     colnames = col_profile + col_symptoms
     for key in colnames:
@@ -123,11 +137,16 @@ def sun_burst(data):
     frame.testedPositiveOn.fillna(value=False, inplace=True)
     frame.loc[frame[
                   'testedPositiveOn'] != False, 'testedPositiveOn'] = 'Positive Corona Test'
+    frame.loc[frame[
+                  'testedPositiveOn'] == False, 'testedPositiveOn'] = 'No Corona Confirmed'
+    frame['nr_symptoms'] = frame[colnames[1:]].sum(axis=1)
     for col in colnames[1:]:
         frame[col] = frame[col].replace(True, names_symptoms[col])
-        frame[col] = frame[col].replace(False, f'not {col}')
+        frame[col] = frame[col].replace(False, ' ')
 
-    fig = px.sunburst(frame, path=colnames)
+    fig = px.sunburst(frame,
+                      path=colnames, color='nr_symptoms',
+                      maxdepth=6)
     fig.update_layout(
         margin=dict(
             l=0,
