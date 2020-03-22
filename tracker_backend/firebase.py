@@ -21,4 +21,4 @@ def get_data():
     #     docs_in_a_dict[doc.id] = doc.to_dict()
 
     # return docs_in_a_dict
-    return json.load(open(filedir + "/../dummydata/sampledata.json", 'r'))
+    return json.load(open(filedir + "/../dummydata/sampledata", 'r'))
