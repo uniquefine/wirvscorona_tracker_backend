@@ -43,9 +43,16 @@ def infected_cummulative(data):
     fig = px.line(test_times, x='testedPositiveOn', y='percentInfected')
 
     fig.update_layout(
-        title="Cummulative Plot of Positive tested",
         xaxis_title="Time",
         yaxis_title="Tested positive [%]",
+        margin=dict(
+                l=0,
+                r=0,
+                b=0,
+                t=0,
+                pad=1
+            ),
+
     )
     fig.update_yaxes(range=[0, 100])
     return fig.to_html(full_html=False, include_plotlyjs=True)#, include_mathjax=True)
@@ -57,9 +64,15 @@ def symptom_dist(data):
     frequencies = most_recent.sum() / most_recent.count()
     fig = px.bar(x=frequencies.index, y=frequencies * 100, )
     fig.update_layout(
-        title="Most Recent Symptom Frequency",
         xaxis_title="Symptom",
         yaxis_title="Reported [%]",
+        margin=dict(
+            l=0,
+            r=0,
+            b=0,
+            t=0,
+            pad=1
+        ),
     )
     fig.update_yaxes(range=[0, 100])
     return fig.to_html(full_html=False, include_plotlyjs=True)#, include_mathjax=True)
@@ -102,5 +115,15 @@ def sun_burst(data):
         frame[col] = frame[col].replace(False, f'not {col}')
 
     fig = px.sunburst(frame, path=colnames)
+    fig.update_layout(
+        margin=dict(
+            l=0,
+            r=0,
+            b=0,
+            t=0,
+            pad=1
+        ),
+    )
+
     return fig.to_html(full_html=False, include_plotlyjs=True)
 
