@@ -20,7 +20,7 @@ names_profile = {'gender': 'Geschlecht', 'isSmoker': 'Raucher',
                  'hasFlueVaccine': 'Grippe Impfung',
                  'hasLungDisease': 'Kronische Lungenkrankheit',
                  'hasDiabetes': 'Diabetes', 'isObese': 'Übergewicht',
-                 'takeSteroids': 'Steroide', 'lives alone': 'Einzelhaushalt'}
+                 'takeSteroids': 'Steroide', 'livesAlone': 'Einzelhaushalt'}
 
 
 def to_df(d):
