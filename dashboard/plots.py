@@ -54,3 +54,4 @@ def sun_burst(data):
 
     fig = px.sunburst(frame, path = colnames)
     return fig.to_html(full_html=False, include_plotlyjs=True)
+
