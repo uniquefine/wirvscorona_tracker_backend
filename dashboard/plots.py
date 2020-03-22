@@ -1,19 +1,18 @@
 import plotly.express as px
 import pandas as pd
 import datetime
-#from sklearn import tree
 
 col_profile = ['gender', 'isSmoker', 'testedPositiveOn', 'hasFlueVaccine',
                'hasLungDisease', 'hasDiabetes', 'isObese', 'takeSteroids']
 col_symptoms = ['hasCough', 'hasFever', 'hasChills', 'feelsWeak',
                 'hasLimbPain', 'hasSniff', 'hasDiarrhea', 'hasSoreThroat',
                 'hasHeadache', 'hasBreathingProblem']
-names_symptoms = {'hasCough': 'Cough', 'hasFever': 'Fever',
-                  'hasChills': 'Chills', 'feelsWeak': 'Feels Weak',
-                  'hasLimbPain': 'Limb Pain', 'hasSniff': 'Sniffles',
-                  'hasDiarrhea': 'Diarrhea', 'hasSoreThroat': 'Sore Throat',
-                  'hasHeadache': 'Headache',
-                  'hasBreathingProblem': 'Breathing Problem'}
+names_symptoms = {'hasCough': 'Husten', 'hasFever': 'Fiber',
+                  'hasChills': 'Schüttelfrost', 'feelsWeak': 'Schwäche',
+                  'hasLimbPain': 'Gliederschmerzen', 'hasSniff': 'Schnupfen',
+                  'hasDiarrhea': 'Durchfall', 'hasSoreThroat': 'Halsschmerzen',
+                  'hasHeadache': 'Kopfschmerzen',
+                  'hasBreathingProblem': 'Erschwertes Atmen'}
 
 
 def to_df(d):
@@ -60,8 +59,8 @@ def infected_cummulative(data):
     fig = px.line(test_times, x='testedPositiveOn', y='percentInfected')
 
     fig.update_layout(
-        xaxis_title="Time",
-        yaxis_title="Tested positive [%]",
+        xaxis_title="Zeit",
+        yaxis_title="Positiv Getestet [%]",
         margin=dict(
             l=0,
             r=0,
@@ -81,11 +80,12 @@ def symptom_dist(data):
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s')
     most_recent = df.loc[df.groupby('userid')['timestamp'].idxmax()].filter(
         col_symptoms)
+    most_recent.rename(columns=names_symptoms, inplace=True)
     frequencies = most_recent.sum() / most_recent.count()
     fig = px.bar(x=frequencies.index, y=frequencies * 100, )
     fig.update_layout(
         xaxis_title="Symptom",
-        yaxis_title="Reported [%]",
+        yaxis_title="Gemeldet [%]",
         margin=dict(
             l=0,
             r=0,
@@ -137,7 +137,7 @@ def sun_burst(data):
     frame['nr_symptoms'] = frame[colnames[1:]].sum(axis=1)
     for col in colnames[1:]:
         frame[col] = frame[col].replace(True, names_symptoms[col])
-        frame[col] = frame[col].replace(False, f'no {names_symptoms[col]}')
+        frame[col] = frame[col].replace(False, f'Kein {names_symptoms[col]}')
 
     fig = px.sunburst(frame,
                       path=colnames, color='nr_symptoms',
@@ -154,17 +154,3 @@ def sun_burst(data):
 
     return fig.to_html(full_html=False, include_plotlyjs=True)
 
-
-# def plot_tree(data):
-#     df = to_df(data)
-#
-#     df.testedPositiveOn.fillna(value=False, inplace=True)
-#     df.loc[df['testedPositiveOn'] != False, 'testedPositiveOn'] = 1
-#     df.loc[df['testedPositiveOn'] == False, 'testedPositiveOn'] = 0
-#
-#     y = df['testedPositiveOn'].astype('int')
-#     X = df[col_symptoms].astype('bool')
-#     clf = tree.DecisionTreeClassifier(max_depth=6)
-#     fitted = clf.fit(X, y)
-#     tree.plot_tree(fitted)
-#     return tree.plot_tree(fitted)
